@@ -1,1 +1,1 @@
-web: CoreValue
+web: corevalue
