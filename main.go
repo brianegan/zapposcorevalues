@@ -76,6 +76,7 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
   }
 
   w.Header().Set("Content-Type", "application/json")
+  w.Header().Set("Access-Control-Allow-Origin", "*")
   w.Write(response)
 }
 
@@ -87,6 +88,7 @@ func allValuesHandler(w http.ResponseWriter, r *http.Request) {
   }
 
   w.Header().Set("Content-Type", "application/json")
+  w.Header().Set("Access-Control-Allow-Origin", "*")
   w.Write(response)
 }
 
@@ -112,6 +114,7 @@ func valueHandler(w http.ResponseWriter, r *http.Request) {
 
 
   w.Header().Set("Content-Type", "application/json")
+  w.Header().Set("Access-Control-Allow-Origin", "*")
   w.Write(response)
 }
 
@@ -130,6 +133,7 @@ func randomHandler(w http.ResponseWriter, r *http.Request) {
   }
 
   w.Header().Set("Content-Type", "application/json")
+  w.Header().Set("Access-Control-Allow-Origin", "*")
   w.Write(response)
 }
 
