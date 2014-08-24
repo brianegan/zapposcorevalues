@@ -1,5 +1,5 @@
 {
-	"ImportPath": "github.com/realchaseadams/CoreValue",
+	"ImportPath": "github.com/realchaseadams/corevalue",
 	"GoVersion": "go1.1.2",
 	"Deps": [
 		{
