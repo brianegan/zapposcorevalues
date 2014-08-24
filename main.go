@@ -3,10 +3,12 @@ package main
 import(
 "fmt"
 "log"
+"os"
 "net/http"
 "encoding/json"
 "io/ioutil"
 "github.com/bmizerany/pat"
+"github.com/realchaseadams/CoreValue/bindata"
 )
 
 type CoreValueCollection struct {
@@ -30,7 +32,8 @@ func main() {
   mux.Get("/CoreValue/:id", http.HandlerFunc(valueHandler))
 
   http.Handle("/", mux)
-  log.Fatal(http.ListenAndServe(":8080", nil))
+
+  log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), nil))
   fmt.Println("Server started at http://localhost:8080")
 
 }
