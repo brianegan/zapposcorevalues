@@ -3,12 +3,12 @@ package main
 import(
 "fmt"
 "log"
-"os"
 "net/http"
 "encoding/json"
-"io/ioutil"
+// "io/ioutil"
+"os"
 "github.com/bmizerany/pat"
-"github.com/realchaseadams/CoreValue/bindata"
+"github.com/realchaseadams/corevalue/data"
 )
 
 type CoreValueCollection struct {
@@ -28,18 +28,19 @@ var values CoreValueCollection
 func main() {
   loadCoreValues()
   mux := pat.New()
-  mux.Get("/CoreValue", http.HandlerFunc(rootHandler))
+  mux.Get("/", http.HandlerFunc(rootHandler))
+  mux.Get("/CoreValue", http.HandlerFunc(allValuesHandler))
   mux.Get("/CoreValue/:id", http.HandlerFunc(valueHandler))
 
   http.Handle("/", mux)
 
-  log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), nil))
-  fmt.Println("Server started at http://localhost:8080")
+  fmt.Println("Server started at http://localhost:" + os.Getenv("PORT"))
+  log.Fatal(http.ListenAndServe(":" + os.Getenv("PORT"), nil))
 
 }
 
 func loadCoreValues() {
-  doc, err := ioutil.ReadFile("./CoreValues.json")
+  doc, err := data.Asset("CoreValues.json")
 
   if err != nil {
     log.Fatal(err)
@@ -51,6 +52,9 @@ func loadCoreValues() {
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
+}
+
+func allValuesHandler(w http.ResponseWriter, r *http.Request) {
   response, _ := json.Marshal(values)
   w.Header().Set("Content-Type", "application/json")
   w.Write(response)
