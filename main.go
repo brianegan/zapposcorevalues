@@ -23,6 +23,11 @@ type CoreValue struct {
   Summary string `json:"summary"`
 }
 
+type Response struct {
+  StatusCode int `json:"statusCode"`
+  Message string `json:"message"`
+}
+
 var values CoreValueCollection
 
 func main() {
@@ -30,6 +35,7 @@ func main() {
   mux := pat.New()
   mux.Get("/", http.HandlerFunc(rootHandler))
   mux.Get("/CoreValue", http.HandlerFunc(allValuesHandler))
+  mux.Get("/CoreValue/", http.HandlerFunc(allValuesHandler))
   mux.Get("/CoreValue/:id", http.HandlerFunc(valueHandler))
 
   http.Handle("/", mux)
@@ -52,10 +58,25 @@ func loadCoreValues() {
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
+  healthcheck := Response{200, "OKAY"}
+
+  response, err := json.Marshal(healthcheck)
+
+  if err != nil {
+    http.Error(w, err.Error(), http.StatusInternalServerError)
+  }
+
+  w.Header().Set("Content-Type", "application/json")
+  w.Write(response)
 }
 
 func allValuesHandler(w http.ResponseWriter, r *http.Request) {
-  response, _ := json.Marshal(values)
+  response, err := json.Marshal(values)
+
+  if err != nil {
+    http.Error(w, err.Error(), http.StatusInternalServerError)
+  }
+
   w.Header().Set("Content-Type", "application/json")
   w.Write(response)
 }
@@ -63,7 +84,32 @@ func allValuesHandler(w http.ResponseWriter, r *http.Request) {
 func valueHandler(w http.ResponseWriter, r *http.Request) {
   params := r.URL.Query()
   id := params.Get(":id")
+  response, err := json.Marshal(values.CoreValues[id])
+
+  if err != nil {
+    http.Error(w, err.Error(), http.StatusInternalServerError)
+  }
+
+  if values.CoreValues[id].Id == "" {
+    errorHandler(w, r, http.StatusNotFound)
+    return
+  }
+
+
   w.Header().Set("Content-Type", "application/json")
-  response, _ := json.Marshal(values.CoreValues[id])
   w.Write(response)
+}
+
+func errorHandler(w http.ResponseWriter, r *http.Request, status int) {
+  w.WriteHeader(status)
+  if status == http.StatusNotFound {
+    errorMessage := &Response{404, "For non core values, please refer to our non-core value API, coming soon."}
+    response, err := json.Marshal(errorMessage)
+
+    if err != nil {
+      http.Error(w, err.Error(), http.StatusInternalServerError)
+    }
+
+    w.Write(response)
+  }
 }
