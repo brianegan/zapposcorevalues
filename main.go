@@ -124,12 +124,7 @@ func valueHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func randomHandler(w http.ResponseWriter, r *http.Request) {
-	valNum := rand.Intn(10)
-
-	if valNum == 0 {
-		randomHandler(w, r)
-		return
-	}
+	valNum := rand.Intn(9) + 1
 
 	response, err := json.Marshal(values.CoreValues[strconv.Itoa(valNum)])
 
@@ -152,6 +147,8 @@ func errorHandler(w http.ResponseWriter, r *http.Request, status int) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Write(response)
 	}
 }

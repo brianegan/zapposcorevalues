@@ -16,7 +16,11 @@ func bindata_read(data []byte, name string) ([]byte, error) {
 
 	var buf bytes.Buffer
 	_, err = io.Copy(&buf, gz)
-	gz.Close()
+
+	// Defer the gz.Close() method to ensure it always runs,
+	// even if we return early from an error.
+	// See http://blog.golang.org/defer-panic-and-recover
+	defer gz.Close()
 
 	if err != nil {
 		return nil, fmt.Errorf("Read %q: %v", name, err)
