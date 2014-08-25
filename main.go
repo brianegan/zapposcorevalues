@@ -32,6 +32,7 @@ type Response struct {
 	SourceUrl  string `json:"sourceUrl"`
 }
 
+var PORT string
 var values CoreValueCollection
 
 func main() {
@@ -43,8 +44,13 @@ func main() {
 
 	http.Handle("/", mux)
 
-	fmt.Println("Server started at http://localhost:" + os.Getenv("PORT"))
-	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), nil))
+	if os.Getenv("PORT") != "" {
+		PORT = os.Getenv("PORT")
+	} else {
+		PORT = "8080"
+	}
+	fmt.Println("Server started at http://localhost:" + PORT)
+	log.Fatal(http.ListenAndServe(":"+PORT, nil))
 
 }
 
